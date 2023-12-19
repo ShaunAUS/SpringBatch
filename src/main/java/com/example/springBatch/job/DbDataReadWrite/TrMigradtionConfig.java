@@ -18,7 +18,9 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
+import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
+import org.springframework.batch.item.data.builder.RepositoryItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -41,26 +43,23 @@ public class TrMigradtionConfig {
 	private final OrdersRepository ordersRepository;
 	private final AccountsRepository accountsRepository;
 
+
 	@Bean
-	public Job trMigrationJob(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager,
-		Step trMigrationStep) {
+	public Job trMigrationJob(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
 		return new JobBuilder("trMigrationJob", jobRepository)
 			.incrementer(new RunIdIncrementer()) // Id 순차적으로 부여
-			.start(trMigrationStep)
+			.start(trMigrationStep(jobRepository,platformTransactionManager))
 			.build();
 	}
 
 	@Bean
 	@JobScope
 	public Step trMigrationStep(JobRepository jobRepository,
-		PlatformTransactionManager platformTransactionManager,
-		ItemReader trOrdersReader,
-		ItemProcessor trOrderProcessor,
-		ItemWriter trOrdersWriter
+		PlatformTransactionManager platformTransactionManager
 	) {
-		return new StepBuilder("trigrationStep ", jobRepository)
+		return new StepBuilder("trMigrationStep ", jobRepository)
 			.<Orders, Accounts>chunk(5, platformTransactionManager)// 어떤 데이터로 읽어와서 어떤데이터로 쓸건지, 5개의 사이즈만큼 처리후 데이터 커밋
-			.reader(trOrdersReader)
+			.reader(trOrdersReader())
 			/*
 						.writer(new itemwriter() {
 							@override
@@ -72,8 +71,8 @@ public class TrMigradtionConfig {
 							}
 						})
 			*/
-			.processor(trOrderProcessor)
-			.writer(trOrdersWriter)
+			.processor(trOrderProcessor())
+			.writer(trOrdersWriter())
 			.build();
 	}
 	/**
@@ -82,9 +81,8 @@ public class TrMigradtionConfig {
 
 	@Bean
 	@StepScope
-	public RepositoryItemReader<Accounts> trOrdersWriter() {
-		return new RepositoryItemReaderBuilder<Accounts>()
-			.name("trOrdersWriter")
+	public RepositoryItemWriter<Accounts> trOrdersWriter() {
+		return new RepositoryItemWriterBuilder<Accounts>()
 			.repository(accountsRepository)
 			.methodName("save")
 			.build();
@@ -107,7 +105,7 @@ public class TrMigradtionConfig {
 */
 	@Bean
 	@StepScope
-	public ItemProcessor<Orders, Accounts> toOrderProcessor() {
+	public ItemProcessor<Orders, Accounts> trOrderProcessor() {
 		return new ItemProcessor<Orders, Accounts>() {
 			@Override
 			public Accounts process(Orders item) throws Exception {
