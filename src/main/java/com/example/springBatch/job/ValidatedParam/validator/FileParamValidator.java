@@ -11,10 +11,8 @@ public class FileParamValidator implements JobParametersValidator {
 	public void validate(JobParameters parameters) throws JobParametersInvalidException {
 		String fileName = parameters.getString("fileName");
 
-/*
 		if(!StringUtils.endsWithIgnoreCase(fileName,"csv")){
 			throw new JobParametersInvalidException("this is not csv file");
 		}
-*/
 	}
 }
