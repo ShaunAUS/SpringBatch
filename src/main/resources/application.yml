@@ -5,7 +5,7 @@ spring:
     jdbc:
       initialize-schema: always
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/spring_batch
+    url: jdbc:mysql://127.0.0.1:3306/springBatchTest
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: rh3dlekx123@
