@@ -5,7 +5,7 @@ services:
     image: mysql:8.2.0-oracle
     container_name: spring_batch
     environment:
-      MYSQL_DATABASE: "spring batch"
+      MYSQL_DATABASE: "springBatchTest"
       MYSQL_ROOT_PASSWORD: "rh3dlekx123@"
       TZ: "Asia/Seoul"
     command:

@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -53,20 +54,22 @@ public class ValidatedParamJobConfig {
 	@JobScope
 	public Step validatedStep(JobRepository jobRepository,PlatformTransactionManager platformTransactionManager) {
 		return new StepBuilder("validatedStepParamStep", jobRepository)
-			.tasklet(validatedTasklet("test.csv"),platformTransactionManager) // or .chunk(chunkSize, transactionManager)
+			.tasklet(validatedTasklet(),platformTransactionManager) // or .chunk(chunkSize, transactionManager)
 			.build();
 	}
 
 	@Bean
 	@StepScope // 스텝하위에서 실행하기때문에 명시함
-	public Tasklet validatedTasklet(@Value("#{jobParameters['fileName']}") String fileName){
-		return new Tasklet() {
-			@Override
-			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-				System.out.println(fileName);
-				System.out.println("This is first taskLet step");
-				return RepeatStatus.FINISHED;
-			}
+	public Tasklet validatedTasklet(){
+		return (contribution, chunkContext) -> {
+
+			JobParameters jobParameters = contribution.getStepExecution().getJobExecution().getJobParameters();
+			String fileName = jobParameters.getString("fileName");
+
+			//TODO check
+			System.out.println(fileName);
+			System.out.println("This is first taskLet step");
+			return RepeatStatus.FINISHED;
 		};
 	}
 }
