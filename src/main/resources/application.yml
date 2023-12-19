@@ -1,0 +1,13 @@
+spring:
+  batch:
+    job:
+      name: ${job_name:NONE}
+    jdbc:
+      initialize-schema: always
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/spring_batch
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: rh3dlekx123@
+  jpa:
+    show-sql: true
