@@ -1,3 +1,4 @@
+/*
 package com.example.springBatch.job.ConditionalStep;
 
 
@@ -103,3 +104,4 @@ public class ConditionalStepJobConfig {
         };
     }
 }
+*/

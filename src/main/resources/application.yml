@@ -1,7 +1,17 @@
 spring:
+  profiles:
+    active: local
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
   batch:
     job:
       name: ${job_name:NONE}
+      enabled: false # 파라미터가 존재하더라도 이 job 실행 x
     jdbc:
       initialize-schema: always
   datasource:
@@ -11,3 +21,12 @@ spring:
     password: rh3dlekx123@
   jpa:
     show-sql: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    database: h2
