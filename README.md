@@ -1,1 +1,1 @@
-Sprig Batch 5.0 기준
+SpringBatch 5.0 기준
