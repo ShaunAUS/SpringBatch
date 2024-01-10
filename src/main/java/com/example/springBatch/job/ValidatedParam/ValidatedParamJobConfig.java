@@ -36,8 +36,8 @@ public class ValidatedParamJobConfig {
 	public Job validatedParamJob(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager){
 		return new JobBuilder("validatedParamJob",jobRepository)
 			.incrementer(new RunIdIncrementer()) // Id 순차적으로 부여
-			//.validator(new FileParamValidator())
-			.validator(multipleValidator()) // validators
+			//validator(new FileParamValidator()) // 검증 단독으로 할때
+			.validator(multipleValidator()) // validators // 멀티 검증
 			.start(validatedStep(jobRepository,platformTransactionManager))
 			.build();
 	}
@@ -63,7 +63,7 @@ public class ValidatedParamJobConfig {
 	public Tasklet validatedTasklet(){
 		return (contribution, chunkContext) -> {
 
-			JobParameters jobParameters = contribution.getStepExecution().getJobExecution().getJobParameters();
+			JobParameters jobParameters = contribution.getStepExecution().getJobExecution().getJobParameters(); //설정으로 넘어오는 파라미터값
 			String fileName = jobParameters.getString("fileName");
 
 			//TODO check

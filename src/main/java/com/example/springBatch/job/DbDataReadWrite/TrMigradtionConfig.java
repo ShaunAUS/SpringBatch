@@ -36,6 +36,7 @@ import com.example.springBatch.core.domain.orders.OrdersRepository;
 
 import lombok.RequiredArgsConstructor;
 
+//데이터 이관 설정
 @Configuration
 @RequiredArgsConstructor
 public class TrMigradtionConfig {
